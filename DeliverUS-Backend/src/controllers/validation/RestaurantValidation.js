@@ -26,6 +26,15 @@ const create = [
     return checkFileMaxSize(req, 'logo', maxFileSize)
   }).withMessage('Maximum file size of ' + maxFileSize / 1000000 + 'MB')
 ]
+
+/*
+Mediante un cambio en la interfaz de la edición de restaurantes, los propietarios podrán modificar el precio de todos los
+productos de un restaurante en cuestión de segundos.
+
+EXISTE UNA LIMITACIÓN EN EL PORCENTAJE PARA EVITAR INCREMENTOS U OFERTAS MUY AGRESIVAS, DE MANERA QUE EL NUEVO CAMPO
+SÓLO PODRÁ CONTENER VALORES DECIMALES ENTRE -5 Y 5 (EXCLUIDOS AMBOS VALORES).
+*/
+
 const update = [
   check('name').exists().isString().isLength({ min: 1, max: 255 }).trim(),
   check('description').optional({ nullable: true, checkFalsy: true }).isString().trim(),
@@ -48,7 +57,9 @@ const update = [
   }).withMessage('Please upload an image with format (jpeg, png).'),
   check('logo').custom((value, { req }) => {
     return checkFileMaxSize(req, 'logo', maxFileSize)
-  }).withMessage('Maximum file size of ' + maxFileSize / 1000000 + 'MB')
+  }).withMessage('Maximum file size of ' + maxFileSize / 1000000 + 'MB'),
+  // SOLUCIÓN
+  check('percentage').exists().isFloat({ min: -5, max: 5 }).toFloat()
 ]
 
 export { create, update }
